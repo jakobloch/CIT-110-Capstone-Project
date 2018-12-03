@@ -16,6 +16,14 @@ namespace BaseConverter
 	//*************************************************      
 	class Program
 	{
+		enum LetterChoice
+		{
+			A,
+			B,
+			C,
+			D,
+			Q
+		}
 		static void Main(string[] args)
 		{
 			DisplayWelcomeScreen();
@@ -34,6 +42,7 @@ namespace BaseConverter
 			do
 			{
 				string menuChoice;
+				LetterChoice letterChoice;
 
 				DisplayHeader("Main Menu");
 				Console.WriteLine("A) Enter Number");
@@ -41,25 +50,26 @@ namespace BaseConverter
 				Console.WriteLine("C) Calculate");
 				Console.WriteLine("Q) Quit");
 				menuChoice = Console.ReadLine().ToUpper();
+				LetterChoice.TryParse(menuChoice, out letterChoice); 
 
 
 
-				switch (menuChoice)
+				switch (letterChoice)
 				{
-					case "A":
+					case LetterChoice.A:
 						userNumber = DisplayGetUserNumber(); ;
 						break;
-					case "B":
+					case LetterChoice.B:
 						newBase = DisplayChooseNewBase();
 						break;
-					case "C":
+					case LetterChoice.C:
 						DisplayCalculate(userNumber, newBase);
 						break;
-					case "Q":
+					case LetterChoice.Q:
 						runApp = false;
 						break;
 					default:
-						RedText("Please enter A, B, C, D, E, F, or Q");
+						RedText("Please enter A, B, C, or Q");
 						DisplayContinuePrompt();
 						break;
 				}
@@ -89,6 +99,7 @@ namespace BaseConverter
 			do
 			{
 				string menuChoice;
+				LetterChoice letterChoice;
 				validResponse = true;
 				
 				DisplayHeader("Main Menu");
@@ -96,16 +107,17 @@ namespace BaseConverter
 				Console.WriteLine("B) Base 8");
 				Console.WriteLine("C) Base 16");
 				menuChoice = Console.ReadLine().ToUpper();
+				LetterChoice.TryParse(menuChoice, out letterChoice);
 
-				switch (menuChoice)
+				switch (letterChoice)
 				{
-					case "A":
+					case LetterChoice.A:
 						newBase = 2;
 						break;
-					case "B":
+					case LetterChoice.B:
 						newBase = 8;
 						break;
-					case "C":
+					case LetterChoice.C:
 						newBase = 16;
 						break;
 					default:
