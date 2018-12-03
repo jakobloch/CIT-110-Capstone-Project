@@ -24,6 +24,13 @@ namespace BaseConverter
 			D,
 			Q
 		}
+		enum Operations
+		{
+			ADD,
+			SUBTRACT,
+			MULTIPLY,
+			DIVIDE
+		}
 		static void Main(string[] args)
 		{
 			DisplayWelcomeScreen();
@@ -47,7 +54,8 @@ namespace BaseConverter
 				DisplayHeader("Main Menu");
 				Console.WriteLine("A) Enter Number");
 				Console.WriteLine("B) Enter New Base");
-				Console.WriteLine("C) Calculate");
+				Console.WriteLine("C) Convert");
+				Console.WriteLine("D) Calculator");
 				Console.WriteLine("Q) Quit");
 				menuChoice = Console.ReadLine().ToUpper();
 				LetterChoice.TryParse(menuChoice, out letterChoice); 
@@ -63,26 +71,221 @@ namespace BaseConverter
 						newBase = DisplayChooseNewBase();
 						break;
 					case LetterChoice.C:
-						DisplayCalculate(userNumber, newBase);
+						DisplayConvert(userNumber, newBase);
+						break;
+					case LetterChoice.D:
+						DisplayCalculator();
 						break;
 					case LetterChoice.Q:
 						runApp = false;
 						break;
 					default:
 						RedText("Please enter A, B, C, or Q");
-						DisplayContinuePrompt();
+						DisplayRedContinuePrompt();
 						break;
 				}
 
 			} while (runApp);
 		}
 
-		private static void DisplayCalculate(int userNumber, int newBase)
+		private static void DisplayCalculator()
 		{
-			DisplayHeader("Final Calculation");
+			bool runCalculator = true;
+			int[] operands = new int[2];
+			int newBase;
+			Operations currentOperation;
+			string operationSymbol;
+			int answer;
+
+			do
+			{
+				operands = DisplayGetOperands();
+				newBase = DisplayChooseNewBase();
+				currentOperation = DisplayGetOperation();
+				operationSymbol = GetOperationSymbol(currentOperation);
+				answer = PerformOperation(currentOperation, operands);
+				DisplayCalculation(operands, currentOperation, operationSymbol, answer, newBase);
+				runCalculator =  DisplayGetQuitResponse();
+			} while (runCalculator);
+			
+		}
+
+		static bool DisplayGetQuitResponse()
+		{
+			bool validResponse = false;
+			string userResponse;
+			bool runCalculator = true;
+
+
+			while (!validResponse)
+			{
+				DisplayHeader("Calculator");
+
+				Console.Write("Would you like to perform another calculation (YES or NO):");
+				userResponse = Console.ReadLine().ToUpper();
+
+				if (!(userResponse == "NO" || userResponse == "YES"))
+				{
+					RedText("You must enter either 'YES' or 'NO'.");
+					DisplayContinuePrompt();
+				}
+				else
+				{
+					if (userResponse == "NO")
+					{
+						runCalculator = false;
+					}
+
+					validResponse = true;
+				}
+			}
+			return runCalculator;
+		}
+
+		static void DisplayCalculation(int[] numbers, Operations operation, string operationSymbol, int answer, int newBase)
+		{
+			string answerString = "";
+			string newNum;
+			string newNum2;
+
+			DisplayHeader("Calculation");
+			newNum = Convert.ToString(numbers[0], newBase);
+			newNum2 = Convert.ToString(numbers[1], newBase);
+			answerString = Convert.ToString(answer, newBase);
+
+
+
+			if (operation == Operations.DIVIDE && numbers[1] == 0)
+			{
+				RedText("Dividing by zero is not allowed.");
+			}
+			else
+			{
+				Console.WriteLine($"\tAnswer: {newNum} {operationSymbol} {newNum2} = {answerString}");
+			}
+
+			DisplayContinuePrompt();
+		}
+
+		static int PerformOperation(Operations operation, int[] operands)
+		{
+			int answer = 0;
+
+			switch (operation)
+			{
+				case Operations.ADD:
+					answer = operands[0] + operands[1];
+					break;
+
+				case Operations.SUBTRACT:
+					answer = operands[0] - operands[1];
+					break;
+
+				case Operations.MULTIPLY:
+					answer = operands[0] * operands[1];
+					break;
+
+				case Operations.DIVIDE:
+					answer = operands[0] / operands[1];
+					break;
+				default:
+					
+					break;
+			}
+			return answer;
+		}
+
+		static string GetOperationSymbol(Operations currentOperation)
+		{
+			string operationSymbol = "none";
+
+			switch (currentOperation)
+			{
+				case Operations.ADD:
+					operationSymbol = "+";
+					break;
+
+				case Operations.SUBTRACT:
+					operationSymbol = "-";
+					break;
+
+				case Operations.MULTIPLY:
+					operationSymbol = "*";
+					break;
+
+				case Operations.DIVIDE:
+					operationSymbol = "/";
+					break;
+			}
+			return operationSymbol;
+		}
+
+		static Operations DisplayGetOperation()
+		{
+			string userReponse;
+			Operations operation;
+
+			do
+			{
+				DisplayHeader("Enter Operation");
+				Console.Write("Enter the operation (Add, Subtract, Multiply, or Divide):");
+				userReponse = Console.ReadLine();
+				Operations.TryParse(userReponse.ToUpper(), out operation);
+				Console.WriteLine();
+
+				if (!Operations.TryParse(userReponse.ToUpper(), out operation))
+				{
+					RedText("Please enter a valid operation (Add, Subtract, Multiply, or Divide)");
+					Console.ReadKey();
+				}
+			} while (!Operations.TryParse(userReponse.ToUpper(), out operation));
+
+			return operation;
+		}
+
+		static int[] DisplayGetOperands()
+		{
+			bool validResponse = false;
+			string userResponse;
+			int[] numbers = new int[2];
+
+
+			while (!validResponse)
+			{
+				for (int index = 0; index < numbers.Length; index++)
+				{
+					do
+					{
+						DisplayHeader("Enter operands");
+
+						Console.Write($"Enter operand {index + 1} in base 10:");
+						userResponse = Console.ReadLine();
+
+						if (!int.TryParse(userResponse, out numbers[index]))
+						{
+							RedText("You must enter a number");
+							DisplayRedContinuePrompt();
+						}
+						else
+						{
+							validResponse = true;
+						}
+					} while (!int.TryParse(userResponse, out numbers[index]));
+
+				}
+
+			}
+
+			return numbers;
+		}
+
+		private static void DisplayConvert(int userNumber, int newBase)
+		{
+			DisplayHeader("Conversion");
 			string newNumber;
 
-			newNumber = Convert.ToString(userNumber,newBase); 
+			newNumber = Convert.ToString(userNumber,newBase);
+			userNumber.ToString("N");
 			
 			Console.WriteLine($"The number {userNumber} in base 10 is {newNumber} in base {newBase}.");
 			DisplayContinuePrompt();
@@ -90,22 +293,23 @@ namespace BaseConverter
 
 		private static int DisplayChooseNewBase()
 		{
-			DisplayHeader("Choose New Base");
 			int newBase = 0;
 			bool validResponse;
 
-			Console.WriteLine("Now for the last step! Choose the base that you want to convert your number to.");
-			Console.Write("Enter new base:");
 			do
 			{
 				string menuChoice;
 				LetterChoice letterChoice;
 				validResponse = true;
-				
-				DisplayHeader("Main Menu");
+
+				DisplayHeader("Choose New Base");
+
+				Console.Write("Enter new base:");
+				Console.WriteLine();
 				Console.WriteLine("A) Base 2");
 				Console.WriteLine("B) Base 8");
-				Console.WriteLine("C) Base 16");
+				Console.WriteLine("C) Base 10");
+				Console.WriteLine("D) Base 16");
 				menuChoice = Console.ReadLine().ToUpper();
 				LetterChoice.TryParse(menuChoice, out letterChoice);
 
@@ -118,6 +322,9 @@ namespace BaseConverter
 						newBase = 8;
 						break;
 					case LetterChoice.C:
+						newBase = 10;
+						break;
+					case LetterChoice.D:
 						newBase = 16;
 						break;
 					default:
@@ -140,7 +347,6 @@ namespace BaseConverter
 			do
 			{
 				DisplayHeader("Choose Number");
-				
 
 				Console.WriteLine("Choose a number in base 10");
 				Console.Write("Enter Number:");
