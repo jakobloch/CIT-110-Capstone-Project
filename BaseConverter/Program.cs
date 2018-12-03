@@ -127,7 +127,7 @@ namespace BaseConverter
 				if (!(userResponse == "NO" || userResponse == "YES"))
 				{
 					RedText("You must enter either 'YES' or 'NO'.");
-					DisplayContinuePrompt();
+					DisplayRedContinuePrompt();
 				}
 				else
 				{
@@ -364,7 +364,7 @@ namespace BaseConverter
 		{
 			Console.Clear();
 			DisplayHeader("Welcome");
-			Console.WriteLine("In this application the user will convert a number from base 10 to base 2, 8, or 16");
+			Console.WriteLine("In this application the user will convert a number from base 10 to base 2, 8, 10, or 16");
 			DisplayContinuePrompt();
 		}
 
