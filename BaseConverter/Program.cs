@@ -12,12 +12,13 @@ namespace BaseConverter
 	//Description:			Convert numbers to new bases
 	//Author:				Lochinski, Jakob R
 	//Date Created:			11/30/2018
-	//Date Revised:			12/01/2018
+	//Date Revised:			12/05/2018
 	//*************************************************      
 	class Program
 	{
 		enum LetterChoice
 		{
+            NONE,
 			A,
 			B,
 			C,
@@ -186,7 +187,14 @@ namespace BaseConverter
 					break;
 
 				case Operations.DIVIDE:
-					answer = operands[0] / operands[1];
+                    if (operation == Operations.DIVIDE && operands[1] == 0)
+                    {
+                        RedText("Dividing by zero is not allowed.");
+                    }
+                    else
+                    {
+                        answer = operands[0] / operands[1];
+                    }
 					break;
 				default:
 					
@@ -236,7 +244,7 @@ namespace BaseConverter
 				if (!Operations.TryParse(userReponse.ToUpper(), out operation))
 				{
 					RedText("Please enter a valid operation (Add, Subtract, Multiply, or Divide)");
-					Console.ReadKey();
+                    DisplayRedContinuePrompt();
 				}
 			} while (!Operations.TryParse(userReponse.ToUpper(), out operation));
 
@@ -330,7 +338,7 @@ namespace BaseConverter
 					default:
 						validResponse = false;
 						RedText("Please enter A, B, or C ");
-						DisplayContinuePrompt();
+						DisplayRedContinuePrompt();
 						break;
 				}
 
